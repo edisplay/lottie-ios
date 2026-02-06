@@ -996,9 +996,10 @@ public class LottieAnimationLayer: CALayer {
     return animation.durationFrameTime(forMarker: named)
   }
 
-  public func updateAnimationForBackgroundState() {
+  public func updateAnimationForBackgroundState(backgroundBehavior: LottieBackgroundBehavior? = nil) {
     if let currentContext = animationContext {
-      switch backgroundBehavior {
+      let effectiveBehavior = backgroundBehavior ?? self.backgroundBehavior
+      switch effectiveBehavior {
       case .stop:
         removeCurrentAnimation()
         updateAnimationFrame(currentContext.playFrom)
@@ -1022,11 +1023,15 @@ public class LottieAnimationLayer: CALayer {
     }
   }
 
-  public func updateAnimationForForegroundState(wasWaitingToPlayAnimation: Bool) {
+  public func updateAnimationForForegroundState(
+    wasWaitingToPlayAnimation: Bool,
+    backgroundBehavior: LottieBackgroundBehavior? = nil
+  ) {
     if let currentContext = animationContext {
+      let effectiveBehavior = backgroundBehavior ?? self.backgroundBehavior
       if wasWaitingToPlayAnimation {
         addNewAnimationForContext(currentContext)
-      } else if backgroundBehavior == .pauseAndRestore {
+      } else if effectiveBehavior == .pauseAndRestore {
         /// Restore animation from saved state
         updateInFlightAnimation()
       }
